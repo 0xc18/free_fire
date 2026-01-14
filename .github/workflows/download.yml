@@ -28,12 +28,12 @@ jobs:
         run: mkdir -p output/{arm64-v8a,armeabi-v7a}
 
       - name: download for arm
-        run: apkeep -a com.dts.freefireth -d google-play -o include_additional_files=1,device=sm_j5_prime -e "orinidk4@gmail.com" -t "$AAS_TOKEN" output/armeabi-v7a
+        run: apkeep -a com.dts.freefireth -d google-play -o device=sm_j5_prime,split_apk=1 -e "orinidk4@gmail.com" -t "$AAS_TOKEN" output/armeabi-v7a
         env:
           AAS_TOKEN: ${{ secrets.AAS_TOKEN }}
 
       - name: download for aarch64
-        run: apkeep -a com.dts.freefireth -d google-play -o include_additional_files=1 -e "orinidk4@gmail.com" -t "$AAS_TOKEN" output/arm64-v8a
+        run: apkeep -a com.dts.freefireth -d google-play -o split_apk=1 -e "orinidk4@gmail.com" -t "$AAS_TOKEN" output/arm64-v8a
         env:
           AAS_TOKEN: ${{ secrets.AAS_TOKEN }}
 
