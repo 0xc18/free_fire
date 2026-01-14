@@ -1,0 +1,57 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+#      - name: Install Rust
+#        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Rust crate
+        run: |
+          cargo install apkeep
+
+      - name: Make aarch64 and arm forlder
+        run: mkdir -p output/{arm64-v8a,armeabi-v7a}
+
+      - name: download for arm
+        run: apkeep -a com.dts.freefireth -d google-play -o include_additional_files=1,device=sm_j5_prime -e "orinidk4@gmail.com" -t "$AAS_TOKEN" output/armeabi-v7a
+        env:
+          AAS_TOKEN: ${{ secrets.AAS_TOKEN }}
+
+      - name: download for aarch64
+        run: apkeep -a com.dts.freefireth -d google-play -o include_additional_files=1 -e "orinidk4@gmail.com" -t "$AAS_TOKEN"output/arm64-v8a
+        env:
+          AAS_TOKEN: ${{ secrets.AAS_TOKEN }}
+
+      - name: Zip each folder in output
+        run: |
+          mkdir -p dist
+          for dir in output/*/; do
+            name=$(basename "$dir")
+            zip -r "dist/${name}.zip" "$dir"
+          done
+
+      - name: Create GitHub Release
+        id: create_release
+        run: |
+          TAG="release-$(date +'%Y%m%d-%H%M%S')"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          gh release create "$TAG" dist/*.zip \
+            --title "$TAG" \
+            --notes "Automated release"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
