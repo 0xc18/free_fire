@@ -33,7 +33,7 @@ jobs:
           AAS_TOKEN: ${{ secrets.AAS_TOKEN }}
 
       - name: download for aarch64
-        run: apkeep -a com.dts.freefireth -d google-play -o include_additional_files=1 -e "orinidk4@gmail.com" -t "$AAS_TOKEN"output/arm64-v8a
+        run: apkeep -a com.dts.freefireth -d google-play -o include_additional_files=1 -e "orinidk4@gmail.com" -t "$AAS_TOKEN" output/arm64-v8a
         env:
           AAS_TOKEN: ${{ secrets.AAS_TOKEN }}
 
